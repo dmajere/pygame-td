@@ -1,8 +1,10 @@
-from typing import Tuple, TypeVar
+from typing import Tuple, TypeVar, Union
 
 
 T = TypeVar("T")
 Coordinate = Tuple[int, int]
 Pair = Tuple[T, T]
 
-RED = (255, 0, 0)
+Color = Union[Tuple[int, int, int], str]
+
+RED: Color = (255, 0, 0)
