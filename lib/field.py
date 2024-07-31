@@ -1,4 +1,6 @@
+import sys
 import pygame
+from typing import Tuple
 from lib.util import Color, Coordinate
 from lib.tower import Tower
 
@@ -17,6 +19,7 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_frect()
 
         self.used = False
+        self.weight = sys.maxint
 
 
 class Field:
@@ -41,7 +44,7 @@ class Field:
                 self.tile_sprites.add(tile)
 
     def build(self, pos: Coordinate, tower: Tower) -> bool:
-        tile = (pos[0] // Tile.WIDTH, pos[1] // Tile.HEIGHT)
+        tile = self.get_tile(pos)
         if self.tiles[tile[0]][tile[1]].used:
             return False
         self.tiles[tile[0]][tile[1]].used = True
@@ -51,8 +54,11 @@ class Field:
         self.tower_sprites.add(tower)
         return True
 
+    def get_tile(self, pos: Coordinate) -> Tuple[int, int]:
+        return (pos[0] // Tile.WIDTH, pos[1] // Tile.HEIGHT)
+
     def get_tile_topleft(self, pos: Coordinate) -> Coordinate:
-        tile = (pos[0] // Tile.WIDTH, pos[1] // Tile.HEIGHT)
+        tile = self.get_tile()
         return (tile[0] * Tile.WIDTH, tile[1] * Tile.HEIGHT)
 
     def draw(self, surface: pygame.Surface, position: Coordinate) -> None:
