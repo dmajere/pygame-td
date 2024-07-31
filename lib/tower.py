@@ -10,7 +10,7 @@ class Tower(pygame.sprite.Sprite):
     COLOR: Color = "red"
     BULLET_SIZE: Tuple[int, int] = (4, 4)
     BULLET_MASS: float = 0.1
-    BULLET_SPEED: float = 5.0
+    BULLET_SPEED: float = 1.2
 
     def __init__(
         self, bullets: pygame.sprite.Group, size: Tuple[int, int] = (16, 16)

@@ -12,4 +12,5 @@ class Scene:
         pass
 
     def draw(self, surface: pygame.Surface) -> None:
+        return
         self.field.draw(surface, (0, 0))

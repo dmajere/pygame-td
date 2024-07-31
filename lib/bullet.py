@@ -18,7 +18,7 @@ class Bullet(pygame.sprite.Sprite):
         self.border = pygame.rect.Rect((0, 0), size)
         pygame.draw.rect(self.image, "black", self.border, 1)
         self.rect = self.image.get_frect(center=pos)
-        self.friction = 1
+        self.friction: float = 0.1
 
         self.mass = mass
         self.velocity = 0
