@@ -8,6 +8,7 @@ from pygame.math import Vector2 as vector
 
 class Tower(pygame.sprite.Sprite):
     COLOR: Color = "red"
+    CONSTRUCTION_COLOR: Color = "pink"
     BULLET_SIZE: Tuple[int, int] = (4, 4)
     BULLET_MASS: float = 0.1
     BULLET_SPEED: float = 1.2
@@ -18,14 +19,16 @@ class Tower(pygame.sprite.Sprite):
         super(Tower, self).__init__()
 
         self.image = pygame.Surface(size)
-        self.image.fill(self.COLOR)
+        self.image.fill(self.CONSTRUCTION_COLOR)
 
         self.border = pygame.rect.FRect((0, 0), size)
         pygame.draw.rect(self.image, "black", self.border, 1)
 
         self.rect = self.image.get_frect()
-
         self.bullets = bullets
+
+    def build(self) -> None:
+        self.image.fill(self.COLOR)
 
     def get_target_distance(self, target: Coordinate) -> int:
         return math.sqrt(
