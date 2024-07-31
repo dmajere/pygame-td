@@ -13,7 +13,7 @@ class Tile(pygame.sprite.Sprite):
         self.image.fill(self.COLOR)
         self.border = pygame.Rect(0, 0, self.WIDTH, self.HEIGHT)
         pygame.draw.rect(self.image, "black", self.border, 1)
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_frect()
 
 
 class Field:

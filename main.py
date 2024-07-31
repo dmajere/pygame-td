@@ -1,8 +1,12 @@
 import sys
 import pygame
 from scenes.bullet import BulletScene
+from scenes.tower import TowerScene
 
-SCENES = {"bullet": BulletScene}
+SCENES = {
+    "bullet": BulletScene,
+    "tower": TowerScene,
+}
 
 
 def main(scene: str):

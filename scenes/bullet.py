@@ -2,21 +2,17 @@ import pygame
 from lib.util import Coordinate
 from lib.bullet import Bullet
 from lib.line import Line
-from lib.field import Field
 from scenes.base import Scene
 
 BULLET_SIZE = (10, 10)
 BULLET_MASS = 1
-FRICTION = 1
 
 
 class BulletScene(Scene):
     bullet = None
 
     def __init__(self, width: int, height: int) -> None:
-        super().__init__()
-        self.field = Field(width, height)
-
+        super().__init__(width, height)
         self.bullets = pygame.sprite.Group()
 
         def _start_cb(pos: Coordinate) -> None:
@@ -24,7 +20,7 @@ class BulletScene(Scene):
             self.bullets.add(self.bullet)
 
         def _end_cb(magnitude, unit):
-            self.bullet.shoot(unit, magnitude, FRICTION)
+            self.bullet.shoot(unit, magnitude)
 
         self.line = Line(
             start_cb=_start_cb,
@@ -40,7 +36,8 @@ class BulletScene(Scene):
             self.line.update_line(pygame.mouse.get_pos())
 
     def draw(self, surface: pygame.Surface) -> None:
-        self.field.draw(surface, (0, 0))
+        super().draw(surface)
+
         self.line.draw(surface)
 
         self.bullets.draw(surface)

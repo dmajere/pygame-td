@@ -17,7 +17,8 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill("gray")
         self.border = pygame.rect.Rect((0, 0), size)
         pygame.draw.rect(self.image, "black", self.border, 1)
-        self.rect = self.image.get_rect(center=pos)
+        self.rect = self.image.get_frect(center=pos)
+        self.friction = 1
 
         self.mass = mass
         self.velocity = 0
@@ -26,11 +27,10 @@ class Bullet(pygame.sprite.Sprite):
 
         self.targets = targets
 
-    def shoot(self, unit, momentum, friction: int):
-        self.friction = friction
+    def shoot(self, unit, speed):
         self.unit = Vector2(unit)
-        self.velocity = momentum // self.mass
-        self.acceleration = friction // self.mass
+        self.velocity = speed // self.mass
+        self.acceleration = self.friction // self.mass
 
     def update(self) -> None:
         if self.velocity < 0:
