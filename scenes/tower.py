@@ -8,7 +8,7 @@ from lib.builder import Builder
 class TowerScene(Scene):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.builder = Builder(self.field)
+        self.builder = Builder(self.screen.field)
 
         self.bullets = pygame.sprite.Group()
 
@@ -16,7 +16,7 @@ class TowerScene(Scene):
 
     def build_tower(self, pos: Coordinate):
         tower = Tower(self.bullets)
-        if self.field.build(pos, tower):
+        if self.screen.field.build(pos, tower):
             self.building = False
 
     def process_event(self, event: pygame.Event) -> None:
@@ -25,7 +25,10 @@ class TowerScene(Scene):
                 self.builder.end()
             else:
                 pos = pygame.mouse.get_pos()
-                [tower.shoot(pos) for tower in self.field.tower_sprites.sprites()]
+                [
+                    tower.shoot(pos)
+                    for tower in self.screen.field.tower_sprites.sprites()
+                ]
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_b:
                 self.builder.start(Tower, self.bullets)

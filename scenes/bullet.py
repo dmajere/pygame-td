@@ -5,7 +5,7 @@ from lib.line import Line
 from scenes.base import Scene
 
 BULLET_SIZE = (10, 10)
-BULLET_MASS = 1
+BULLET_MASS = 10
 
 
 class BulletScene(Scene):
