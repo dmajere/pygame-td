@@ -2,10 +2,12 @@ import sys
 import pygame
 from scenes.bullet import BulletScene
 from scenes.tower import TowerScene
+from scenes.path import PathScene
 
 SCENES = {
     "bullet": BulletScene,
     "tower": TowerScene,
+    "path": PathScene,
 }
 
 
@@ -13,8 +15,8 @@ def main(scene: str):
     pygame.init()
     clock = pygame.time.Clock()
 
-    screen_width = 400
-    screen_height = 400
+    screen_width = 800
+    screen_height = 800
     screen = pygame.display.set_mode((screen_width, screen_height))
 
     scene = SCENES[scene](screen_width, screen_height)

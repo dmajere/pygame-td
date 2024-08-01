@@ -29,3 +29,11 @@ ESC to cancel build.
 
 When not in build mode, click to start shooting.
 
+### path
+
+simple monster spawn and path finding logic
+
+TODO:
+* for better testing, need to add building towers, to create mazes
+* rounds since we recalc paths on each round start
+

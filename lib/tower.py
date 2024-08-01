@@ -4,6 +4,7 @@ from typing import Tuple
 from lib.util import Color, Coordinate
 from lib.bullet import Bullet
 from pygame.math import Vector2 as vector
+from lib.tiles import Tile
 
 
 class Tower(pygame.sprite.Sprite):
@@ -14,7 +15,9 @@ class Tower(pygame.sprite.Sprite):
     BULLET_SPEED: float = 1.2
 
     def __init__(
-        self, bullets: pygame.sprite.Group, size: Tuple[int, int] = (16, 16)
+        self,
+        bullets: pygame.sprite.Group,
+        size: Tuple[int, int] = (Tile.WIDTH, Tile.HEIGHT),
     ) -> None:
         super(Tower, self).__init__()
 
