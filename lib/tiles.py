@@ -31,9 +31,10 @@ class Spawn(Tile):
         super().__init__()
         self.monster_sprites = monster_sprites
 
-    def set(self, monsters: Dict[type, int], path) -> None:
-        self.next_spawn = monsters
-        self.path = path
+    def spawn(self, monsters: Dict[type, int], path) -> None:
+        if not self.next_spawn:
+            self.next_spawn = monsters
+            self.path = path
 
     def update(self, _: float = 1.0) -> None:
         super().__init__()
@@ -47,6 +48,6 @@ class Spawn(Tile):
 
 
 class Goal(Tile):
-    COLOR: Color = "yellow"
+    COLOR: Color = "green"
     used = True
     weight = 0

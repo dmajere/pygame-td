@@ -7,6 +7,13 @@ from lib.tower import Tower
 from lib.builder import Builder
 from typing import Tuple, Callable, Iterable
 
+# TODO: should we put this logic in builder?
+# but then what to do with hud buttons? need to figure out ownership
+# should Builder be owned by HUD? This would simplify tower button on_click methods
+TOWER_BUILD_HOTKEYS = {
+    Tower.__name__: pygame.K_b,
+}
+
 
 class Hud:
     def __init__(
@@ -62,9 +69,14 @@ class Hud:
         for enabled_tower in self.enabled_towers:
             self.tower_buttons[enabled_tower].update(dt)
 
+        keys = pygame.key.get_pressed()
+        for tower, key in TOWER_BUILD_HOTKEYS.items():
+            if tower in self.enabled_towers and keys[key]:
+                self.tower_buttons[tower].on_click()
+
 
 class Screen:
-    def __init__(self, width: int, height: int, spawn: Callable) -> None:
+    def __init__(self, width: int, height: int) -> None:
         self.screen_width = width
         self.screen_height = height
         self.hud_height: int = 3 * Tile.HEIGHT
@@ -76,7 +88,15 @@ class Screen:
         available_towers = [
             (Tower, lambda: self.builder.start(Tower, self.field.bullet_sprites))
         ]
-        self.hud = Hud(spawn, available_towers, enabled_towers)
+
+        self.monsters = {}
+
+        def _spawn_func():
+            path = self.field.get_next_path()
+            for s in self.field.spawn_sprites.sprites():
+                s.spawn(self.monsters, path)
+
+        self.hud = Hud(_spawn_func, available_towers, enabled_towers)
 
     def draw(self, surface: pygame.Surface) -> None:
         self.hud.draw(

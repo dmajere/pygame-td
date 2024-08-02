@@ -1,6 +1,7 @@
 import pygame
 from typing import Callable
 from lib.util import Color, Coordinate, Text
+from lib.timer import Timer
 
 
 class Button:
@@ -44,14 +45,14 @@ class Button:
         self.active_color = self.color
         self.active_border_color = self.border_color
         self.active_border_width = self.border_width
+        self.active_timer = Timer(1000)
+        self.on_click = on_click
+        self.on_hover = on_hover
 
         self.width = width
         self.height = height
         self.text_margin = text_margin
         self.text = text
-
-        self.on_click = on_click
-        self.on_hover = on_hover
 
         self.rect = self._get_rect()
 
@@ -95,6 +96,7 @@ class Button:
             surface.blit(self.text.image, self.text.rect)
 
     def update(self, _: int = 1) -> None:
+        self.active_timer.update()
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             if self.hover_color:
                 self.active_color = self.hover_color
@@ -106,8 +108,9 @@ class Button:
                 self.on_hover()
 
             left, _, _ = pygame.mouse.get_pressed()
-            if left and self.on_click and self.active:
+            if left and self.on_click and self.active and not self.active_timer.active:
                 self.on_click()
+                self.active_timer.activate()
         elif self.active:
             self.active_color = self.color
             self.active_border_color = self.border_color

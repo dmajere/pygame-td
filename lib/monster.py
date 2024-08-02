@@ -6,7 +6,7 @@ from lib.util import Coordinate
 
 class Monster(pygame.sprite.Sprite):
     SIZE = (15, 15)
-    SPEED = 1
+    SPEED = 40
 
     def __init__(
         self, start: Coordinate, path: "Path", on_goal_reached: Callable
@@ -15,7 +15,7 @@ class Monster(pygame.sprite.Sprite):
         self.path = path
         self.on_goal_reached = on_goal_reached
         self.current_tile = 0
-        self.direction = (0, 0)
+        self.direction = vector(0, 0)
 
         self.image = pygame.Surface(self.SIZE)
         self.image.fill("black")
@@ -29,14 +29,28 @@ class Monster(pygame.sprite.Sprite):
             diff[1] // norm[1] if diff[1] != 0 else diff[1],
         )
 
+    def _min(self, a: vector, b: vector) -> vector:
+        if a.x != b.x:
+            return a if a.x < b.x else b
+        return a if a.y < b.y else b
+
     def update(self, dt: float) -> None:
+
         if self.current_tile == len(self.path) - 1:
             self.on_goal_reached()
             self.kill()
 
-        if self.rect.center == self.path[self.current_tile]:
+        cx, cy = self.rect.center
+        cx, cy = int(cx), int(cy)
+
+        px, py = self.path[self.current_tile]
+        px, py = int(px), int(py)
+
+        if cx == px and cy == py:
             self.current_tile += 1
-            self.direction = self.get_direction(
-                self.rect.center, self.path[self.current_tile]
-            )
-        self.rect.center += self.direction * self.SPEED * dt
+            px, py = self.path[self.current_tile]
+            px, py = int(px), int(py)
+            self.direction = self.get_direction((cx, cy), (px, py))
+
+        delta = self.direction * self.SPEED * dt
+        self.rect.center += delta

@@ -5,7 +5,7 @@ from lib.screen import Screen
 
 class Scene:
     def __init__(self, width: int, height: int, spawn=None) -> None:
-        self.screen = Screen(width, height, spawn)
+        self.screen = Screen(width, height)
 
     @abstractmethod
     def process_event(self, event: pygame.event.Event) -> None:

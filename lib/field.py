@@ -1,6 +1,6 @@
-from queue import Queue
+import sys
 import pygame
-from typing import Tuple, Optional, List
+from typing import Tuple, Optional
 from lib.tiles import Tile, Spawn, Goal
 from lib.util import Coordinate
 from lib.tower import Tower
@@ -49,13 +49,15 @@ class Field:
         self.pathfinder = PathFinder(self.tiles, spawn, goal)
 
     def build(self, pos: Coordinate, tower: Tower) -> bool:
-        tile = self.get_tile(pos)
-        if not tile:
+        tile_pos = self.get_tile(pos)
+        if not tile_pos:
             return False
-        if self.tiles[tile[0]][tile[1]].used:
+        tile = self.tiles[tile_pos[0]][tile_pos[1]]
+        if tile.used:
             return False
-        self.tiles[tile[0]][tile[1]].used = True
-        tower.rect.topleft = (tile[0] * Tile.WIDTH, tile[1] * Tile.HEIGHT)
+        tile.used = True
+        tile.weight = sys.maxsize
+        tower.rect.topleft = (tile_pos[0] * Tile.WIDTH, tile_pos[1] * Tile.HEIGHT)
         tower.build()
 
         self.tower_sprites.add(tower)
@@ -78,10 +80,6 @@ class Field:
         if not tile:
             return None
         return (tile[0] * Tile.WIDTH, tile[1] * Tile.HEIGHT)
-
-    def set_monster_spawn(self, monsters, path) -> None:
-        for sprite in self.spawn_sprites.sprites():
-            sprite.set(monsters, path)
 
     def draw(self, surface: pygame.Surface, position: Coordinate) -> None:
         self.tile_sprites.draw(self.surface)
