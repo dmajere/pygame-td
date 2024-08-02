@@ -1,1 +1,8 @@
-* Rebalance bullet flight for new frame rate
+[] Rebalance bullet flight for new frame rate
+[] Tower monster detection. 
+[] Tower radius of sight
+[] Shooting at monsters
+[] Bullet - monster collision
+[] Monster health, bullet damage
+
+[] Fix pathfinding for unreachable goal
