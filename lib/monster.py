@@ -29,7 +29,7 @@ class Monster(pygame.sprite.Sprite):
             diff[1] // norm[1] if diff[1] != 0 else diff[1],
         )
 
-    def update(self) -> None:
+    def update(self, dt: float) -> None:
         if self.current_tile == len(self.path) - 1:
             self.on_goal_reached()
             self.kill()
@@ -39,4 +39,4 @@ class Monster(pygame.sprite.Sprite):
             self.direction = self.get_direction(
                 self.rect.center, self.path[self.current_tile]
             )
-        self.rect.center += self.direction * self.SPEED
+        self.rect.center += self.direction * self.SPEED * dt

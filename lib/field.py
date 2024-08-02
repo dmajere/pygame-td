@@ -25,6 +25,7 @@ class Field:
 
         self.tile_sprites = pygame.sprite.Group()
         self.tower_sprites = pygame.sprite.Group()
+        self.bullet_sprites = pygame.sprite.Group()
         self.spawn_sprites = pygame.sprite.Group()
         self.monster_sprites = pygame.sprite.Group()
 
@@ -86,9 +87,13 @@ class Field:
         self.tile_sprites.draw(self.surface)
         self.tower_sprites.draw(self.surface)
         self.monster_sprites.draw(self.surface)
+        self.bullet_sprites.draw(self.surface)
+
         surface.blit(self.surface, position)
 
     def update(self, dt: float = 1.0) -> None:
-        self.tile_sprites.update()
-        self.spawn_sprites.update()
-        self.monster_sprites.update()
+        self.tile_sprites.update(dt)
+        self.spawn_sprites.update(dt)
+
+        self.monster_sprites.update(dt)
+        self.bullet_sprites.update(dt)

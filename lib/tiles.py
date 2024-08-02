@@ -35,7 +35,7 @@ class Spawn(Tile):
         self.next_spawn = monsters
         self.path = path
 
-    def update(self) -> None:
+    def update(self, _: float = 1.0) -> None:
         super().__init__()
         if self.next_spawn:
             for clz, num in self.next_spawn.items():

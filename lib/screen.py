@@ -71,22 +71,23 @@ class Screen:
 
         self.field = Field(self.screen_width, self.screen_height - self.hud_height)
         self.builder = Builder(self.field)
-        self.bullets = pygame.sprite.Group()
 
         enabled_towers = [Tower.__name__]
-        available_towers = [(Tower, lambda: self.builder.start(Tower, self.bullets))]
+        available_towers = [
+            (Tower, lambda: self.builder.start(Tower, self.field.bullet_sprites))
+        ]
         self.hud = Hud(spawn, available_towers, enabled_towers)
 
     def draw(self, surface: pygame.Surface) -> None:
-        self.field.draw(surface, (0, 0))
         self.hud.draw(
             surface,
             (self.screen_width, self.hud_height),
             (0, self.screen_height - self.hud_height),
         )
+        self.field.draw(surface, (0, 0))
         self.builder.draw(surface)
 
     def update(self, dt: float = 1.0) -> None:
         self.hud.update(dt)
-        self.builder.update(dt)
         self.field.update(dt)
+        self.builder.update(dt)

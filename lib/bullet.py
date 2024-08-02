@@ -32,14 +32,14 @@ class Bullet(pygame.sprite.Sprite):
         self.velocity = speed // self.mass
         self.acceleration = self.friction // self.mass
 
-    def update(self) -> None:
+    def update(self, dt: float) -> None:
         if self.velocity < 0:
             self.on_max_distance()
             self.kill()
         if self.path_tile_reached():
             self.on_path_tile_reached()
 
-        delta = self.unit * self.velocity
+        delta = self.unit * self.velocity * dt
         self.velocity -= self.acceleration
         pos = Vector2(self.rect.center) + delta
         self.rect.center = pos
