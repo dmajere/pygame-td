@@ -17,9 +17,6 @@ class TowerScene(Scene):
                     tower.shoot(pos)
                     for tower in self.screen.field.tower_sprites.sprites()
                 ]
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_b:
-                self.screen.builder.start(Tower, self.screen.field.bullet_sprites)
 
     def draw(self, surface: pygame.Surface) -> None:
         super().draw(surface)

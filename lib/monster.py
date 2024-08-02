@@ -34,6 +34,9 @@ class Monster(pygame.sprite.Sprite):
             return a if a.x < b.x else b
         return a if a.y < b.y else b
 
+    def get_move_delta(self, dt: float) -> vector:
+        return self.direction * self.SPEED * dt
+
     def update(self, dt: float) -> None:
 
         if self.current_tile == len(self.path) - 1:
@@ -52,5 +55,4 @@ class Monster(pygame.sprite.Sprite):
             px, py = int(px), int(py)
             self.direction = self.get_direction((cx, cy), (px, py))
 
-        delta = self.direction * self.SPEED * dt
-        self.rect.center += delta
+        self.rect.center += self.get_move_delta(dt)

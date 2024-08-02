@@ -1,7 +1,8 @@
-[] Rebalance bullet flight for new frame rate
-[] Tower monster detection. 
-[] Tower radius of sight
-[] Shooting at monsters
+[x] Rebalance bullet flight for new frame rate
+[x] Tower monster detection. 
+[x] Tower radius of sight
+[x] Shooting at monsters
+[] Monster future position calculation
 [] Bullet - monster collision
 [] Monster health, bullet damage
 

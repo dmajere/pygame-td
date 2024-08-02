@@ -5,7 +5,7 @@ from lib.line import Line
 from scenes.base import Scene
 
 BULLET_SIZE = (10, 10)
-BULLET_MASS = 10
+BULLET_MASS = 0.5
 
 
 class BulletScene(Scene):
@@ -13,11 +13,10 @@ class BulletScene(Scene):
 
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.bullets = pygame.sprite.Group()
 
         def _start_cb(pos: Coordinate) -> None:
             self.bullet = Bullet(BULLET_SIZE, pos, BULLET_MASS)
-            self.bullets.add(self.bullet)
+            self.screen.field.bullet_sprites.add(self.bullet)
 
         def _end_cb(magnitude, unit):
             self.bullet.shoot(unit, magnitude)
@@ -39,6 +38,3 @@ class BulletScene(Scene):
         super().draw(surface)
 
         self.line.draw(surface)
-
-        self.bullets.draw(surface)
-        self.bullets.update()

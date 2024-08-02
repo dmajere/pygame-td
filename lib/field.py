@@ -57,8 +57,7 @@ class Field:
             return False
         tile.used = True
         tile.weight = sys.maxsize
-        tower.rect.topleft = (tile_pos[0] * Tile.WIDTH, tile_pos[1] * Tile.HEIGHT)
-        tower.build()
+        tower.build((tile_pos[0] * Tile.WIDTH, tile_pos[1] * Tile.HEIGHT))
 
         self.tower_sprites.add(tower)
         return True
@@ -92,6 +91,6 @@ class Field:
     def update(self, dt: float = 1.0) -> None:
         self.tile_sprites.update(dt)
         self.spawn_sprites.update(dt)
-
         self.monster_sprites.update(dt)
         self.bullet_sprites.update(dt)
+        self.tower_sprites.update(self.monster_sprites, dt)
