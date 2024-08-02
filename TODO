@@ -2,7 +2,7 @@
 [x] Tower monster detection. 
 [x] Tower radius of sight
 [x] Shooting at monsters
-[] Monster future position calculation
+[x] Monster future position calculation
 [] Bullet - monster collision
 [] Monster health, bullet damage
 

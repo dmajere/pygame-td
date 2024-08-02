@@ -6,7 +6,7 @@ from lib.util import Coordinate
 
 class Monster(pygame.sprite.Sprite):
     SIZE = (15, 15)
-    SPEED = 40
+    SPEED = 15
 
     def __init__(
         self, start: Coordinate, path: "Path", on_goal_reached: Callable

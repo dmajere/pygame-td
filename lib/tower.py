@@ -69,7 +69,51 @@ class Tower(pygame.sprite.Sprite):
         self.shoot_cooldown.update()
         target = self.get_target_in_reach(monster_sprites)
         if target and not self.shoot_cooldown.active:
-            # TODO: need to calculate target position properly,
-            # right now its lagging
-            self.shoot(target.rect.center + target.get_move_delta(dt))
-            self.shoot_cooldown.activate()
+            # For each visible target we try to calculate bullet interseciton point,
+            # if there is no solution for it (target moving to fast to hit it).
+            # Don't waste bullet try another target
+            if aim := self.calculate_intersection(
+                target.rect.center,
+                target.direction,
+                target.SPEED,
+                self.rect.center,
+                self.BULLET_SPEED,
+                dt,
+            ):
+                self.shoot(aim)
+                self.shoot_cooldown.activate()
+
+    def calculate_intersection(
+        self,
+        target_start: Coordinate,
+        target_direction: vector,
+        target_speed: float,
+        bullet_start: Coordinate,
+        bullet_speed: float,
+        dt: float,
+    ) -> Optional[vector]:
+
+        target_start = vector(target_start)
+        target_direction = target_direction.normalize()
+        bullet_start = vector(bullet_start)
+        target_velocity = target_speed * target_direction
+        relative_position = target_start - bullet_start
+
+        # Solve for the time t
+        a = target_velocity.length_squared() - bullet_speed**2
+        b = 2 * relative_position.dot(target_velocity)
+        c = relative_position.length_squared()
+
+        # Solve the quadratic equation a*t^2 + b*t + c = 0
+        discriminant = b**2 - 4 * a * c
+        if discriminant < 0:
+            return None, "No solution, the bullet cannot intercept the target."
+
+        # Calculate possible solutions for t
+        t1 = (-b + discriminant**0.5) / (2 * a)
+        t2 = (-b - discriminant**0.5) / (2 * a)
+        t = max(t1, t2)
+        if t < 0:
+            return None, "No valid solution, the bullet cannot intercept the target."
+
+        return target_start + target_velocity * t * dt
