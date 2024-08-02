@@ -21,6 +21,7 @@ def main(scene: str):
 
     scene = SCENES[scene](screen_width, screen_height)
     while True:
+        dt = clock.tick(60) / 1000
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -29,9 +30,9 @@ def main(scene: str):
 
         screen.fill("white")
         scene.draw(screen)
+        scene.update(dt)
 
         pygame.display.flip()
-        clock.tick(60)
 
 
 if __name__ == "__main__":

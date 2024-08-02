@@ -13,3 +13,6 @@ class Scene:
 
     def draw(self, surface: pygame.Surface) -> None:
         self.screen.draw(surface)
+
+    def update(self, dt: float = 1.0) -> None:
+        self.screen.update(dt)
