@@ -92,5 +92,5 @@ class Field:
         self.tile_sprites.update(dt)
         self.spawn_sprites.update(dt)
         self.monster_sprites.update(dt)
-        self.bullet_sprites.update(dt)
+        self.bullet_sprites.update(self.monster_sprites, dt)
         self.tower_sprites.update(self.monster_sprites, dt)

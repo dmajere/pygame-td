@@ -1,5 +1,7 @@
 import pygame
+from typing import Iterable
 from pygame.math import Vector2
+from lib.monster import Monster
 from lib.util import Coordinate
 
 
@@ -9,7 +11,7 @@ class Bullet(pygame.sprite.Sprite):
         size: Coordinate,
         pos: Coordinate,
         mass: int,
-        targets: pygame.sprite.Group = None,
+        damage: int,
     ) -> None:
         super(Bullet, self).__init__()
 
@@ -21,18 +23,21 @@ class Bullet(pygame.sprite.Sprite):
         self.friction: float = 0.1
 
         self.mass = mass
+        self.damage = damage
         self.velocity = 0
         self.acceleration = 0
         self.unit = Vector2(0, 0)
-
-        self.targets = targets
 
     def shoot(self, unit, speed):
         self.unit = Vector2(unit)
         self.velocity = speed // self.mass
         self.acceleration = self.friction // self.mass
 
-    def update(self, dt: float) -> None:
+    def update(self, targets: Iterable[Monster], dt: float) -> None:
+        for target in targets:
+            if target.rect.colliderect(self.rect):
+                target.take_damage(self.damage)
+                self.kill()
         if self.velocity < 0:
             self.on_max_distance()
             self.kill()

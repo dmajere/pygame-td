@@ -15,6 +15,7 @@ class Tower(pygame.sprite.Sprite):
     BULLET_SIZE: Tuple[int, int] = (4, 4)
     BULLET_MASS: float = 0.1
     BULLET_SPEED: float = 20.0
+    BULLET_DAMAGE: float = 10
     VISION_DISTANCE = Tile.WIDTH * 3
     SHOOTING_RATE = 10
 
@@ -46,7 +47,9 @@ class Tower(pygame.sprite.Sprite):
         )
 
     def shoot(self, target: Coordinate) -> None:
-        bullet = Bullet(self.BULLET_SIZE, self.rect.center, self.BULLET_MASS)
+        bullet = Bullet(
+            self.BULLET_SIZE, self.rect.center, self.BULLET_MASS, self.BULLET_DAMAGE
+        )
         self.bullets.add(bullet)
         distance = self.get_target_distance(target)
         direction = vector(

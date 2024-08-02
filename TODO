@@ -3,7 +3,16 @@
 [x] Tower radius of sight
 [x] Shooting at monsters
 [x] Monster future position calculation
-[] Bullet - monster collision
-[] Monster health, bullet damage
+[x] Bullet - monster collision
+[x] Monster health, bullet damage
 
 [] Fix pathfinding for unreachable goal
+[] Player health. Monster do damage on reaching goal tile
+[] More HUD
+    * show player health, 
+    * show number of monsters running
+    * block building while monsters running
+    * block more spawn while previous spawn running
+    * show round counter
+
+[] Optional: Add monster health bar

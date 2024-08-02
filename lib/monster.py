@@ -7,6 +7,7 @@ from lib.util import Coordinate
 class Monster(pygame.sprite.Sprite):
     SIZE = (15, 15)
     SPEED = 15
+    HEALTH: float = 100
 
     def __init__(
         self, start: Coordinate, path: "Path", on_goal_reached: Callable
@@ -36,6 +37,11 @@ class Monster(pygame.sprite.Sprite):
 
     def get_move_delta(self, dt: float) -> vector:
         return self.direction * self.SPEED * dt
+
+    def take_damage(self, damage: float):
+        self.HEALTH -= damage
+        if self.HEALTH <= 0:
+            self.kill()
 
     def update(self, dt: float) -> None:
 
