@@ -1,4 +1,5 @@
 import pygame
+from lib.util import Coordinate
 
 
 class Builder:
@@ -8,6 +9,7 @@ class Builder:
     def __init__(self, field) -> None:
         self.field = field
 
+    @property
     def building(self) -> bool:
         return self._object is not None
 
@@ -15,8 +17,7 @@ class Builder:
         self._object = clz(*args, **kwargs)
         self._build_group.add(self._object)
 
-    def end(self) -> None:
-        pos = pygame.mouse.get_pos()
+    def end(self, pos: Coordinate) -> None:
         if self.field.build(pos, self._object):
             self._clean()
 
@@ -28,8 +29,18 @@ class Builder:
         self._clean()
 
     def draw(self, surface: pygame.Surface):
-        if self._object:
-            self._object.rect.topleft = self.field.get_tile_topleft(
-                pygame.mouse.get_pos()
-            )
-            self._build_group.draw(surface)
+        self._build_group.draw(surface)
+
+    def update(self, _: float = 1.0) -> None:
+        left, _, _ = pygame.mouse.get_pressed()
+        keys = pygame.key.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+
+        if self.building:
+            if left:
+                self.end(mouse_pos)
+            elif keys[pygame.K_ESCAPE]:
+                self.cancel()
+            else:
+                if topleft := self.field.get_tile_topleft(mouse_pos):
+                    self._object.rect.topleft = topleft

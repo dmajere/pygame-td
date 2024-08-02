@@ -21,9 +21,7 @@ class TowerScene(Scene):
 
     def process_event(self, event: pygame.Event) -> None:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.builder.building():
-                self.builder.end()
-            else:
+            if not self.builder.building:
                 pos = pygame.mouse.get_pos()
                 [
                     tower.shoot(pos)
@@ -32,8 +30,6 @@ class TowerScene(Scene):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_b:
                 self.builder.start(Tower, self.bullets)
-            if event.key == pygame.K_ESCAPE:
-                self.builder.cancel()
 
     def draw(self, surface: pygame.Surface) -> None:
         super().draw(surface)
@@ -41,3 +37,7 @@ class TowerScene(Scene):
         self.builder.draw(surface)
 
         self.bullets.update()
+
+    def update(self, dt: float = 1.0) -> None:
+        super().update(dt)
+        self.builder.update()

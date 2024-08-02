@@ -49,6 +49,8 @@ class Field:
 
     def build(self, pos: Coordinate, tower: Tower) -> bool:
         tile = self.get_tile(pos)
+        if not tile:
+            return False
         if self.tiles[tile[0]][tile[1]].used:
             return False
         self.tiles[tile[0]][tile[1]].used = True
@@ -62,11 +64,18 @@ class Field:
         self.pathfinder.set_tile_weights()
         return self.pathfinder.get_path()
 
-    def get_tile(self, pos: Coordinate) -> Tuple[int, int]:
-        return (pos[0] // Tile.WIDTH, pos[1] // Tile.HEIGHT)
+    def get_tile(self, pos: Coordinate) -> Optional[Tuple[int, int]]:
+        x = pos[0] // Tile.WIDTH
+        y = pos[1] // Tile.HEIGHT
+        if all((x >= 0, x < len(self.tiles), y >= 0, y < len(self.tiles[0]))):
+            return (x, y)
+        else:
+            return None
 
-    def get_tile_topleft(self, pos: Coordinate) -> Coordinate:
+    def get_tile_topleft(self, pos: Coordinate) -> Optional[Coordinate]:
         tile = self.get_tile(pos)
+        if not tile:
+            return None
         return (tile[0] * Tile.WIDTH, tile[1] * Tile.HEIGHT)
 
     def set_monster_spawn(self, monsters, path) -> None:
@@ -77,9 +86,9 @@ class Field:
         self.tile_sprites.draw(self.surface)
         self.tower_sprites.draw(self.surface)
         self.monster_sprites.draw(self.surface)
-
         surface.blit(self.surface, position)
 
+    def update(self, dt: float = 1.0) -> None:
         self.tile_sprites.update()
         self.spawn_sprites.update()
         self.monster_sprites.update()

@@ -7,6 +7,7 @@ class Button:
     def __init__(
         self,
         color: Color,
+        inactive_color: Color = None,
         on_click: Callable = None,
         on_hover: Callable = None,
         width: int = None,
@@ -21,6 +22,7 @@ class Button:
         hover_border_width: int = None,
     ) -> None:
         self.color = color
+        self.inactive_color = inactive_color or color
 
         self.border_width = (
             border_width if border_width is not None and border_width >= 0 else 0
@@ -74,7 +76,6 @@ class Button:
 
     def draw(self, surface: pygame.Surface, c: Coordinate) -> None:
         self.rect.center = c
-        self.text.rect.center = c
 
         pygame.draw.rect(
             surface, self.active_color, self.rect, border_radius=self.border_radius
@@ -87,8 +88,11 @@ class Button:
                 width=self.active_border_width,
                 border_radius=self.border_radius,
             )
-        pygame.draw.rect(surface, self.active_color, self.text.rect, -1)
-        surface.blit(self.text.image, self.text.rect)
+
+        if self.text:
+            self.text.rect.center = c
+            pygame.draw.rect(surface, self.active_color, self.text.rect, -1)
+            surface.blit(self.text.image, self.text.rect)
 
     def update(self, _: int = 1) -> None:
         if self.rect.collidepoint(pygame.mouse.get_pos()):
@@ -102,9 +106,13 @@ class Button:
                 self.on_hover()
 
             left, _, _ = pygame.mouse.get_pressed()
-            if left and self.on_click:
+            if left and self.on_click and self.active:
                 self.on_click()
-        else:
+        elif self.active:
             self.active_color = self.color
+            self.active_border_color = self.border_color
+            self.active_border_width = self.border_width
+        else:
+            self.active_color = self.inactive_color
             self.active_border_color = self.border_color
             self.active_border_width = self.border_width
