@@ -17,7 +17,7 @@ class Tower(pygame.sprite.Sprite):
     BULLET_SPEED: float = 20.0
     BULLET_DAMAGE: float = 10
     VISION_DISTANCE = Tile.WIDTH * 3
-    SHOOTING_RATE = 10
+    SHOOTING_RATE = 1
 
     def __init__(
         self,

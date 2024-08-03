@@ -7,7 +7,7 @@ from lib.timer import Timer
 class Button:
     def __init__(
         self,
-        color: Color,
+        color: Color = None,
         inactive_color: Color = None,
         on_click: Callable = None,
         on_hover: Callable = None,
@@ -22,6 +22,7 @@ class Button:
         hover_border_color: Color = None,
         hover_border_width: int = None,
     ) -> None:
+        assert color
         self.color = color
         self.inactive_color = inactive_color or color
 

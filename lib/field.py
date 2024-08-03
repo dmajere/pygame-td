@@ -29,22 +29,30 @@ class Field:
         self.spawn_sprites = pygame.sprite.Group()
         self.monster_sprites = pygame.sprite.Group()
 
-        spawn = spawn or (0, 0)
-        goal = goal or (self.cols - 1, self.rows - 1)
-
         for c in range(self.cols):
             self.tiles.append([])
             for r in range(self.rows):
-                if (c, r) == spawn:
-                    tile = Spawn(self.monster_sprites)
-                    self.spawn_sprites.add(tile)
-                elif (c, r) == goal:
-                    tile = Goal()
-                else:
-                    tile = Tile()
-                tile.rect.topleft = (c * Tile.WIDTH, r * Tile.HEIGHT)
-                self.tiles[c].append(tile)
-                self.tile_sprites.add(tile)
+                self.tiles[c].append(None)
+
+        goal = goal or (self.cols - 1, self.rows - 1)
+        self.goal_tile = Goal()
+        self.tiles[goal[0]][goal[1]] = self.goal_tile
+
+        spawn = spawn or (0, 0)
+
+        def damage():
+            self.goal_tile.health -= 10
+
+        self.spawn_tile = Spawn(self.monster_sprites, damage)
+        self.tiles[spawn[0]][spawn[1]] = self.spawn_tile
+        self.spawn_sprites.add(self.spawn_tile)
+
+        for c in range(self.cols):
+            for r in range(self.rows):
+                if self.tiles[c][r] == None:
+                    self.tiles[c][r] = Tile()
+                self.tiles[c][r].rect.topleft = (c * Tile.WIDTH, r * Tile.HEIGHT)
+                self.tile_sprites.add(self.tiles[c][r])
 
         self.pathfinder = PathFinder(self.tiles, spawn, goal)
 

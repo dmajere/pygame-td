@@ -6,13 +6,14 @@
 [x] Bullet - monster collision
 [x] Monster health, bullet damage
 
-[] Fix pathfinding for unreachable goal
-[] Player health. Monster do damage on reaching goal tile
+[x] Player health. Monster do damage on reaching goal tile
+[] Build currency
 [] More HUD
-    * show player health, 
-    * show number of monsters running
-    * block building while monsters running
-    * block more spawn while previous spawn running
-    * show round counter
+    + show player health, 
+    + block building while monsters running
+    + block more spawn while previous spawn running
+    - show round counter
+    - show number of monsters running
 
+[] Fix pathfinding for unreachable goal
 [] Optional: Add monster health bar

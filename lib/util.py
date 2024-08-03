@@ -21,7 +21,20 @@ class Text(pygame.sprite.Sprite):
         background_color: Color = None,
     ) -> None:
         super().__init__()
-        self.image = font.render(
-            text, False, text_color, background_color
+        self.font = font
+        self.text_color = text_color
+        self.background_color = background_color
+        self.text = text
+
+        self.image = self.font.render(
+            self.text, False, self.text_color, self.background_color
         ).convert_alpha()
         self.rect = self.image.get_rect()
+
+    def update(self, text: str) -> None:
+        if text != self.text:
+            self.text = text
+            self.image = self.font.render(
+                self.text, False, self.text_color, self.background_color
+            ).convert_alpha()
+            self.rect = self.image.get_rect(center=self.rect.center)
