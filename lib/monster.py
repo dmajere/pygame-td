@@ -17,6 +17,7 @@ class Monster(pygame.sprite.Sprite):
         path: "Path",
         on_goal_reached: Callable,
         on_kill: Callable,
+        level: int = 1,
     ) -> None:
         super(Monster, self).__init__()
         self.path = path
@@ -24,6 +25,7 @@ class Monster(pygame.sprite.Sprite):
         self.on_kill = on_kill
         self.current_tile = 0
         self.direction = vector(0, 0)
+        self.HEALTH += self.HEALTH * (level / 10)
 
         self.image = pygame.Surface(self.SIZE)
         self.image.fill("black")

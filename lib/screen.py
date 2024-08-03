@@ -7,6 +7,7 @@ from lib.button import Button
 from lib.tower import Tower
 from typing import Tuple, Callable, Iterable
 from lib.timer import Timer
+from lib.monster import Monster
 
 # TODO: should we put this logic in builder?
 # but then what to do with hud buttons? need to figure out ownership
@@ -132,13 +133,11 @@ class Screen:
             (Tower, lambda: self.field.builder.start(Tower, self.field.bullet_sprites))
         ]
 
-        self.monsters = []
-
         def _spawn_func():
             self.hud.round += 1
             path = self.field.get_next_path()
             for s in self.field.spawn_sprites.sprites():
-                s.spawn(self.monsters[self.hud.round - 1], path)
+                s.spawn({Monster: self.hud.round}, path)
 
         self.hud = Hud(_spawn_func, available_towers, enabled_towers)
 

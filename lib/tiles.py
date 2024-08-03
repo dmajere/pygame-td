@@ -51,14 +51,15 @@ class Spawn(Tile):
         super().__init__()
         self.spawn_timer.update()
         if self.next_spawn:
-            for clz, num in self.next_spawn.items():
-                for _ in range(num):
+            for clz, level in self.next_spawn.items():
+                for _ in range(int(10 * level)):
                     self.spawn_queue.put(
                         clz(
                             self.rect.center,
                             self.path,
                             self.monster_on_reach,
                             self.monster_on_kill,
+                            level,
                         )
                     )
             self.next_spawn = None
