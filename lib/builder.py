@@ -6,14 +6,18 @@ class Builder:
     _object: pygame.sprite.Sprite = None
     _build_group = pygame.sprite.GroupSingle()
 
-    def __init__(self, field) -> None:
+    def __init__(self, field, money: int) -> None:
         self.field = field
+        self.money = money
 
     @property
     def building(self) -> bool:
         return self._object is not None
 
     def start(self, clz, *args, **kwargs) -> None:
+        if self.money - clz.COST < 0:
+            return
+        self.money -= clz.COST
         self._object = clz(*args, **kwargs)
         self._build_group.add(self._object)
 

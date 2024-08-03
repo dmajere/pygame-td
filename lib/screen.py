@@ -7,6 +7,7 @@ from lib.button import Button
 from lib.tower import Tower
 from lib.builder import Builder
 from typing import Tuple, Callable, Iterable
+from lib.timer import Timer
 
 # TODO: should we put this logic in builder?
 # but then what to do with hud buttons? need to figure out ownership
@@ -27,6 +28,7 @@ class Hud:
         self.active = True
         self.round = 0
         self.health = None
+        self.money = None
 
         self.spawn_button = Button(
             color=(255, 235, 153),
@@ -42,9 +44,11 @@ class Hud:
         )
 
         self.health_text = Text(f"Health: {self.health}", self.font, RED)
+        self.money_text = Text(f"Money: {self.money}", self.font, (255, 215, 0))
 
         self.tower_buttons = {}
         self.enabled_towers = enabled_towers
+        self.hotkey_timer = Timer(500)
         for tower, tower_click in available_towers:
             self.tower_buttons[tower.__name__] = Button(
                 tower.COLOR,
@@ -64,14 +68,24 @@ class Hud:
 
         spawn_button_x = size[0] - self.spawn_button.rect.width // 2 - 10
         self.spawn_button.draw(surface, (spawn_button_x, pos[1] + 50))
-        health_button_x = (
+
+        health_x = (
             spawn_button_x
             - self.health_text.rect.width // 2
             - self.spawn_button.rect.width // 2
             - 10
         )
-        self.health_text.rect.center = (health_button_x, pos[1] + 50)
+        self.health_text.rect.center = (health_x, pos[1] + 50)
         surface.blit(self.health_text.image, self.health_text.rect)
+
+        money_x = (
+            health_x
+            - self.health_text.rect.width // 2
+            - self.money_text.rect.width // 2
+            - 10
+        )
+        self.money_text.rect.center = (money_x, pos[1] + 50)
+        surface.blit(self.money_text.image, self.money_text.rect)
 
         for idx, tower in enumerate(self.enabled_towers):
             row = idx // 6 + 1
@@ -84,7 +98,9 @@ class Hud:
         self.active = state
 
     def update(self, dt: int = 1) -> None:
+        self.hotkey_timer.update()
         self.health_text.update(f"Health: {self.health}")
+        self.money_text.update(f"Money: {self.money}")
 
         self.spawn_button.active = self.active
         for button in self.tower_buttons.values():
@@ -94,11 +110,12 @@ class Hud:
         for enabled_tower in self.enabled_towers:
             self.tower_buttons[enabled_tower].update(dt)
 
-        if self.active:
+        if self.active and not self.hotkey_timer.active:
             keys = pygame.key.get_pressed()
             for tower, key in TOWER_BUILD_HOTKEYS.items():
                 if tower in self.enabled_towers and keys[key]:
                     self.tower_buttons[tower].on_click()
+                    self.hotkey_timer.activate()
 
 
 class Screen:
@@ -108,7 +125,7 @@ class Screen:
         self.hud_height: int = 3 * Tile.HEIGHT
 
         self.field = Field(self.screen_width, self.screen_height - self.hud_height)
-        self.builder = Builder(self.field)
+        self.builder = Builder(self.field, 100)
 
         enabled_towers = [Tower.__name__]
         available_towers = [
@@ -127,12 +144,14 @@ class Screen:
 
     def draw(self, surface: pygame.Surface) -> None:
         self.field.draw(surface, (0, 0))
+
+        self.hud.health = self.field.goal_tile.health
+        self.hud.money = self.builder.money
         self.hud.draw(
             surface,
             (self.screen_width, self.hud_height),
             (0, self.screen_height - self.hud_height),
         )
-        self.hud.health = self.field.goal_tile.health
         self.builder.draw(surface)
 
     def update(self, dt: float = 1.0) -> None:
@@ -143,6 +162,7 @@ class Screen:
         hud_active = not bool(len(self.field.monster_sprites.sprites()))
         self.hud.set_active(hud_active)
         self.hud.health = self.field.goal_tile.health
+        self.hud.money = self.builder.money
 
         self.hud.update(dt)
         self.field.update(dt)
