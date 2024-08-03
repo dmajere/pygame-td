@@ -31,11 +31,5 @@ When not in build mode, click to start shooting.
 
 ### path
 
-* simple monster spawn and path finding logic.
-* Spawn button sends one monster.
-* red square at the bottom is tower build button.
-* B key is hotkey for tower build
+* main game testing.
 
-TODO:
-
-* block HUD buttons (spawn and build) while monsters are running
