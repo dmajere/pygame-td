@@ -7,13 +7,14 @@
 [x] Monster health, bullet damage
 
 [x] Player health. Monster do damage on reaching goal tile
-[] Build currency
-[] More HUD
+[x] Build currency
+[x] More HUD
     + show player health, 
     + block building while monsters running
     + block more spawn while previous spawn running
-    - show round counter
-    - show number of monsters running
+    + show round counter
+    + show number of monsters running
 
-[] Fix pathfinding for unreachable goal
+[] Fix pathfinding 
+[] Game mode. Unlimited rounds, increase monster count and health each round
 [] Optional: Add monster health bar

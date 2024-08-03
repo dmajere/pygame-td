@@ -8,13 +8,20 @@ class Monster(pygame.sprite.Sprite):
     SIZE = (15, 15)
     SPEED = 15
     HEALTH: float = 100
+    DAMAGE = 10
+    REWARD = 5
 
     def __init__(
-        self, start: Coordinate, path: "Path", on_goal_reached: Callable
+        self,
+        start: Coordinate,
+        path: "Path",
+        on_goal_reached: Callable,
+        on_kill: Callable,
     ) -> None:
         super(Monster, self).__init__()
         self.path = path
         self.on_goal_reached = on_goal_reached
+        self.on_kill = on_kill
         self.current_tile = 0
         self.direction = vector(0, 0)
 
@@ -41,12 +48,13 @@ class Monster(pygame.sprite.Sprite):
     def take_damage(self, damage: float):
         self.HEALTH -= damage
         if self.HEALTH <= 0:
+            self.on_kill(self)
             self.kill()
 
     def update(self, dt: float) -> None:
 
         if self.current_tile == len(self.path) - 1:
-            self.on_goal_reached()
+            self.on_goal_reached(self)
             self.kill()
 
         cx, cy = self.rect.center

@@ -5,6 +5,7 @@ from lib.tiles import Tile, Spawn, Goal
 from lib.util import Coordinate
 from lib.tower import Tower
 from lib.pathfind import PathFinder
+from lib.builder import Builder
 
 
 class Field:
@@ -23,6 +24,7 @@ class Field:
         self.surface = pygame.Surface((self.cols * Tile.WIDTH, self.rows * Tile.HEIGHT))
         self.tiles = []
 
+        self.builder = Builder(self, 100)
         self.tile_sprites = pygame.sprite.Group()
         self.tower_sprites = pygame.sprite.Group()
         self.bullet_sprites = pygame.sprite.Group()
@@ -40,10 +42,13 @@ class Field:
 
         spawn = spawn or (0, 0)
 
-        def damage():
-            self.goal_tile.health -= 10
+        def damage(monster):
+            self.goal_tile.health -= monster.DAMAGE
 
-        self.spawn_tile = Spawn(self.monster_sprites, damage)
+        def death(monster):
+            self.builder.money += monster.REWARD
+
+        self.spawn_tile = Spawn(self.monster_sprites, damage, death)
         self.tiles[spawn[0]][spawn[1]] = self.spawn_tile
         self.spawn_sprites.add(self.spawn_tile)
 
@@ -93,10 +98,12 @@ class Field:
         self.tower_sprites.draw(self.surface)
         self.monster_sprites.draw(self.surface)
         self.bullet_sprites.draw(self.surface)
+        self.builder.draw(self.surface)
 
         surface.blit(self.surface, position)
 
     def update(self, dt: float = 1.0) -> None:
+        self.builder.update(dt)
         self.tile_sprites.update(dt)
         self.spawn_sprites.update(dt)
         self.monster_sprites.update(dt)

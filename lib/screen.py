@@ -5,7 +5,6 @@ from lib.tiles import Tile
 from lib.util import Coordinate, Text, RED, BLACK
 from lib.button import Button
 from lib.tower import Tower
-from lib.builder import Builder
 from typing import Tuple, Callable, Iterable
 from lib.timer import Timer
 
@@ -24,9 +23,11 @@ class Hud:
         available_towers: Iterable[Tuple[Tower, Callable]],
         enabled_towers: Tuple[Tower],
     ) -> None:
-        self.font = pygame.font.Font(None, 50)
+        self.spawn_font = pygame.font.Font(None, 50)
+        self.text_font = pygame.font.Font(None, 20)
         self.active = True
         self.round = 0
+        self.monsters = 0
         self.health = None
         self.money = None
 
@@ -36,15 +37,19 @@ class Hud:
             on_click=spawn_func,
             text=Text(
                 "Spawn",
-                self.font,
+                self.spawn_font,
                 text_color=(51, 51, 51),
             ),
             text_margin=5,
             border_radius=5,
         )
 
-        self.health_text = Text(f"Health: {self.health}", self.font, RED)
-        self.money_text = Text(f"Money: {self.money}", self.font, (255, 215, 0))
+        self.health_text = Text(f"Health: {self.health}", self.text_font, RED)
+        self.money_text = Text(f"Money: {self.money}", self.text_font, (255, 215, 0))
+        self.round_text = Text(f"Round: {self.round}", self.text_font, BLACK)
+        self.monsters_text = Text(
+            f"Monsters left: {self.monsters}", self.text_font, BLACK
+        )
 
         self.tower_buttons = {}
         self.enabled_towers = enabled_towers
@@ -69,23 +74,17 @@ class Hud:
         spawn_button_x = size[0] - self.spawn_button.rect.width // 2 - 10
         self.spawn_button.draw(surface, (spawn_button_x, pos[1] + 50))
 
-        health_x = (
-            spawn_button_x
-            - self.health_text.rect.width // 2
-            - self.spawn_button.rect.width // 2
-            - 10
-        )
-        self.health_text.rect.center = (health_x, pos[1] + 50)
-        surface.blit(self.health_text.image, self.health_text.rect)
+        text_x = spawn_button_x - self.monsters_text.rect.width - 100
 
-        money_x = (
-            health_x
-            - self.health_text.rect.width // 2
-            - self.money_text.rect.width // 2
-            - 10
-        )
-        self.money_text.rect.center = (money_x, pos[1] + 50)
+        self.health_text.rect.topleft = (text_x, pos[1] + 10)
+        self.money_text.rect.topleft = (text_x, pos[1] + 30)
+        self.round_text.rect.topleft = (text_x, pos[1] + 50)
+        self.monsters_text.rect.topleft = (text_x, pos[1] + 70)
+
+        surface.blit(self.health_text.image, self.health_text.rect)
         surface.blit(self.money_text.image, self.money_text.rect)
+        surface.blit(self.round_text.image, self.round_text.rect)
+        surface.blit(self.monsters_text.image, self.monsters_text.rect)
 
         for idx, tower in enumerate(self.enabled_towers):
             row = idx // 6 + 1
@@ -101,6 +100,8 @@ class Hud:
         self.hotkey_timer.update()
         self.health_text.update(f"Health: {self.health}")
         self.money_text.update(f"Money: {self.money}")
+        self.round_text.update(f"Round: {self.round}")
+        self.monsters_text.update(f"Monsters left: {self.monsters}")
 
         self.spawn_button.active = self.active
         for button in self.tower_buttons.values():
@@ -125,11 +126,10 @@ class Screen:
         self.hud_height: int = 3 * Tile.HEIGHT
 
         self.field = Field(self.screen_width, self.screen_height - self.hud_height)
-        self.builder = Builder(self.field, 100)
 
         enabled_towers = [Tower.__name__]
         available_towers = [
-            (Tower, lambda: self.builder.start(Tower, self.field.bullet_sprites))
+            (Tower, lambda: self.field.builder.start(Tower, self.field.bullet_sprites))
         ]
 
         self.monsters = []
@@ -146,13 +146,12 @@ class Screen:
         self.field.draw(surface, (0, 0))
 
         self.hud.health = self.field.goal_tile.health
-        self.hud.money = self.builder.money
+        self.hud.money = self.field.builder.money
         self.hud.draw(
             surface,
             (self.screen_width, self.hud_height),
             (0, self.screen_height - self.hud_height),
         )
-        self.builder.draw(surface)
 
     def update(self, dt: float = 1.0) -> None:
         if self.field.goal_tile.health <= 0:
@@ -162,8 +161,8 @@ class Screen:
         hud_active = not bool(len(self.field.monster_sprites.sprites()))
         self.hud.set_active(hud_active)
         self.hud.health = self.field.goal_tile.health
-        self.hud.money = self.builder.money
+        self.hud.money = self.field.builder.money
+        self.hud.monsters = len(self.field.monster_sprites.sprites())
 
         self.hud.update(dt)
         self.field.update(dt)
-        self.builder.update(dt)

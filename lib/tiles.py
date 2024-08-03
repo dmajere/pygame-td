@@ -30,11 +30,15 @@ class Spawn(Tile):
     used = True
 
     def __init__(
-        self, monster_sprites: pygame.sprite.Group, monster_on_reach: Callable
+        self,
+        monster_sprites: pygame.sprite.Group,
+        monster_on_reach: Callable,
+        monster_on_kill: Callable,
     ) -> None:
         super().__init__()
         self.monster_sprites = monster_sprites
         self.monster_on_reach = monster_on_reach
+        self.monster_on_kill = monster_on_kill
         self.spawn_timer = Timer(1200)
         self.spawn_queue = Queue()
 
@@ -50,7 +54,12 @@ class Spawn(Tile):
             for clz, num in self.next_spawn.items():
                 for _ in range(num):
                     self.spawn_queue.put(
-                        clz(self.rect.center, self.path, self.monster_on_reach)
+                        clz(
+                            self.rect.center,
+                            self.path,
+                            self.monster_on_reach,
+                            self.monster_on_kill,
+                        )
                     )
             self.next_spawn = None
         elif not self.spawn_queue.empty() and not self.spawn_timer.active:
