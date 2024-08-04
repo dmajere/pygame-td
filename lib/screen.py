@@ -141,6 +141,9 @@ class Screen:
 
         self.hud = Hud(_spawn_func, available_towers, enabled_towers)
 
+    def process_event(self, event: pygame.event.Event) -> None:
+        pass
+
     def draw(self, surface: pygame.Surface) -> None:
         self.field.draw(surface, (0, 0))
 

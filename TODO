@@ -1,19 +1,2 @@
-[x] Rebalance bullet flight for new frame rate
-[x] Tower monster detection. 
-[x] Tower radius of sight
-[x] Shooting at monsters
-[x] Monster future position calculation
-[x] Bullet - monster collision
-[x] Monster health, bullet damage
-
-[x] Player health. Monster do damage on reaching goal tile
-[x] Build currency
-[x] More HUD
-    + show player health, 
-    + block building while monsters running
-    + block more spawn while previous spawn running
-    + show round counter
-    + show number of monsters running
-
-[x] Game mode. Unlimited rounds, increase monster count and health each round
-[x] Fix pathfinding!!!
+[] Refactor. Clear callbacks between components
+[] More bullet types
