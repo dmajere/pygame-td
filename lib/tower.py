@@ -111,13 +111,13 @@ class Tower(pygame.sprite.Sprite):
         # Solve the quadratic equation a*t^2 + b*t + c = 0
         discriminant = b**2 - 4 * a * c
         if discriminant < 0:
-            return None, "No solution, the bullet cannot intercept the target."
+            return None
 
         # Calculate possible solutions for t
         t1 = (-b + discriminant**0.5) / (2 * a)
         t2 = (-b - discriminant**0.5) / (2 * a)
         t = max(t1, t2)
         if t < 0:
-            return None, "No valid solution, the bullet cannot intercept the target."
+            return None
 
         return target_start + target_velocity * t * dt

@@ -1,55 +1,81 @@
 from lib.util import Coordinate
 from typing import Tuple, List
-from queue import Queue
+from queue import PriorityQueue
+import sys
 
 
 class PathFinder:
-    queue = Queue()
-
-    def __init__(self, tiles, spawn: Tuple[int, int], goal: Tuple[int, int]) -> None:
+    def __init__(self, tiles) -> None:
         self.tiles = tiles
-        self.spawn_tile = spawn
-        self.goal_tile = goal
+        self.mem = {}
 
     def get_adjacent_tiles(self, tile: Tuple[int, int]) -> List[Tuple[int, int]]:
-        tiles = []
-        if tile[0] > 0:
-            tiles.append((tile[0] - 1, tile[1]))  # left
-        if tile[0] < len(self.tiles) - 1:
-            tiles.append((tile[0] + 1, tile[1]))  # right
-        if tile[1] > 0:
-            tiles.append((tile[0], tile[1] - 1))  # top
-        if tile[1] < len(self.tiles[0]) - 1:
-            tiles.append((tile[0], tile[1] + 1))  # bottom
-        return tiles
-
-    def set_tile_weights(self):
-        tile = self.tiles[self.goal_tile[0]][self.goal_tile[1]]
-        for t in self.get_adjacent_tiles(self.goal_tile):
-            self.queue.put((tile.weight, t))
-
-        while not self.queue.empty():
-            parent_weight, pos = self.queue.get_nowait()
-            tile = self.tiles[pos[0]][pos[1]]
-            if tile.weight is None:
-                tile.weight = parent_weight + 1
-                for t in self.get_adjacent_tiles(pos):
-                    self.queue.put((tile.weight, t))
+        i, j = tile
+        return (
+            (a, b)
+            for a, b in [(i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)]
+            if 0 <= a < len(self.tiles)
+            if 0 <= b < len(self.tiles[0])
+            if self.get_tile((a, b)).weight != sys.maxsize
+        )
 
     def get_tile(self, pos):
         return self.tiles[pos[0]][pos[1]]
 
-    def get_path(self) -> List[Coordinate]:
-        pos = self.spawn_tile
-        current_tile = self.get_tile(pos)
-        path = [current_tile.rect.center]
+    def get_path(self, start, goal):
+        shortest_path = self.a_star_graph_search(
+            start=start,
+            goal=goal,
+        )
+        return shortest_path
 
-        while current_tile.weight != 0:
-            for adj in self.get_adjacent_tiles(pos):
-                next_tile = self.get_tile(adj)
-                if next_tile.weight < current_tile.weight:
-                    path.append(next_tile.rect.center)
-                    pos = adj
-                    current_tile = next_tile
-                    break
-        return path
+    def a_star_graph_search(
+        self,
+        start,
+        goal,
+    ):
+        visited = set()
+        came_from = dict()
+        distance = {start: 0}
+        frontier = PriorityQueue()
+        frontier.put((0, start))
+        heuristic = self.get_heuristic()
+
+        while not frontier.empty():
+            node = frontier.get()[1]
+            if node in visited:
+                continue
+            if node == goal:
+                return self.reconstruct_path(came_from, start, node)
+            visited.add(node)
+            for successor in self.get_adjacent_tiles(node):
+                frontier.put((distance[node] + 1 + heuristic(successor), successor))
+                if (
+                    successor not in distance
+                    or distance[node] + 1 < distance[successor]
+                ):
+                    distance[successor] = distance[node] + 1
+                    came_from[successor] = node
+        return None
+
+    def reconstruct_path(self, came_from, start, end):
+        """
+        >>> came_from = {'b': 'a', 'c': 'a', 'd': 'c', 'e': 'd', 'f': 'd'}
+        >>> reconstruct_path(came_from, 'a', 'e')
+        ['a', 'c', 'd', 'e']
+        """
+        reverse_path = [self.get_tile(end).rect.center]
+        while end != start:
+            end = came_from[end]
+            reverse_path.append(self.get_tile(end).rect.center)
+        return list(reversed(reverse_path))
+
+    def get_heuristic(self):
+        M, N = len(self.tiles), len(self.tiles[0])
+        (a, b) = goal_cell = (M - 1, N - 1)
+
+        def get_clear_path_distance_from_goal(cell):
+            (i, j) = cell
+            return max(abs(a - i), abs(b - j))
+
+        return get_clear_path_distance_from_goal

@@ -36,11 +36,11 @@ class Field:
             for r in range(self.rows):
                 self.tiles[c].append(None)
 
-        goal = goal or (self.cols - 1, self.rows - 1)
+        self.goal_pos = goal or (self.cols - 1, self.rows - 1)
         self.goal_tile = Goal()
-        self.tiles[goal[0]][goal[1]] = self.goal_tile
+        self.tiles[self.goal_pos[0]][self.goal_pos[1]] = self.goal_tile
 
-        spawn = spawn or (0, 0)
+        self.spawn_pos = spawn or (0, 0)
 
         def damage(monster):
             self.goal_tile.health -= monster.DAMAGE
@@ -49,7 +49,7 @@ class Field:
             self.builder.money += monster.REWARD
 
         self.spawn_tile = Spawn(self.monster_sprites, damage, death)
-        self.tiles[spawn[0]][spawn[1]] = self.spawn_tile
+        self.tiles[self.spawn_pos[0]][self.spawn_pos[1]] = self.spawn_tile
         self.spawn_sprites.add(self.spawn_tile)
 
         for c in range(self.cols):
@@ -59,7 +59,7 @@ class Field:
                 self.tiles[c][r].rect.topleft = (c * Tile.WIDTH, r * Tile.HEIGHT)
                 self.tile_sprites.add(self.tiles[c][r])
 
-        self.pathfinder = PathFinder(self.tiles, spawn, goal)
+        self.pathfinder = PathFinder(self.tiles)
 
     def build(self, pos: Coordinate, tower: Tower) -> bool:
         tile_pos = self.get_tile(pos)
@@ -68,16 +68,18 @@ class Field:
         tile = self.tiles[tile_pos[0]][tile_pos[1]]
         if tile.used:
             return False
-        tile.used = True
         tile.weight = sys.maxsize
+        if not self.get_next_path():
+            tile.weight = None
+            return False
+        tile.used = True
         tower.build((tile_pos[0] * Tile.WIDTH, tile_pos[1] * Tile.HEIGHT))
 
         self.tower_sprites.add(tower)
         return True
 
     def get_next_path(self):
-        self.pathfinder.set_tile_weights()
-        return self.pathfinder.get_path()
+        return self.pathfinder.get_path(self.spawn_pos, self.goal_pos)
 
     def get_tile(self, pos: Coordinate) -> Optional[Tuple[int, int]]:
         x = pos[0] // Tile.WIDTH

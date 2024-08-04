@@ -16,5 +16,4 @@
     + show number of monsters running
 
 [x] Game mode. Unlimited rounds, increase monster count and health each round
-
-[] Fix pathfinding!!!
+[x] Fix pathfinding!!!
